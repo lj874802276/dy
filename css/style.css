@@ -702,6 +702,12 @@ select:hover {
 .developer-name {
     color: #1677ff;
     font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.developer-name:hover {
+    text-decoration: underline;
 }
 
 .preview-container {
