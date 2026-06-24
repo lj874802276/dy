@@ -10,9 +10,9 @@ const state = {
     images: [],
     settings: {
         paperSize: 'A5Landscape',
-        perPage: 4,       // 每页张数
+        perPage: 3,       // 每页张数
         direction: 'horizontal', // 排列方向: vertical(纵向) / horizontal(横向)
-        margin: 5,
+        margin: 7,
         gap: 2,
         showLabel: false,
         zoom: 1
@@ -756,11 +756,9 @@ function generatePreview(useMm = false) {
             `;
         }
 
-        const pageStyle = useMm 
-            ? `width: ${paperSize.width}mm; height: ${paperSize.height}mm;`
-            : '';
+        const pageStyle = getPageStyle(useMm);
 
-        const pageClass = useMm ? 'page-print' : getPageClass();
+        const pageClass = getPageClass();
 
         return `
             <div class="page-preview ${pageClass}" style="${pageStyle}">
@@ -781,12 +779,34 @@ function generatePreview(useMm = false) {
  * 获取页面CSS类名
  */
 function getPageClass() {
-    return {
+    const baseClass = 'page-preview';
+    const presetClass = {
         A5Landscape: 'page-a5-landscape',
         A5Portrait: 'page-a5-portrait',
         A4Landscape: 'page-a4-landscape',
         A4Portrait: 'page-a4-portrait'
     }[state.settings.paperSize];
+    
+    // 预设纸张使用CSS类，自定义纸张使用内联样式
+    return presetClass ? `${baseClass} ${presetClass}` : baseClass;
+}
+
+/**
+ * 获取页面样式（用于自定义纸张）
+ */
+function getPageStyle(useMm) {
+    if (useMm) {
+        // 打印模式：使用mm单位
+        const paperSize = paperSizes[state.settings.paperSize];
+        return `width: ${paperSize.width}mm; height: ${paperSize.height}mm;`;
+    } else if (state.settings.paperSize === 'Custom') {
+        // 预览模式 + 自定义纸张：使用px单位
+        const paperSize = paperSizes[state.settings.paperSize];
+        const mmToPx = 3.779527559;
+        return `width: ${paperSize.width * mmToPx}px; height: ${paperSize.height * mmToPx}px;`;
+    }
+    // 预览模式 + 预设纸张：使用CSS类
+    return '';
 }
 
 // ============================================
@@ -796,13 +816,34 @@ function getPageClass() {
 /**
  * 应用缩放
  */
+/**
+ * 应用缩放并自动适应容器
+ */
 function applyZoom() {
     const zoom = state.settings.zoom;
     const pagePreviews = dom.pagesWrapper.querySelectorAll('.page-preview');
+    
     pagePreviews.forEach(page => {
-        page.style.transform = `scale(${zoom})`;
-        page.style.transformOrigin = 'top center';
+        // 获取页面原始尺寸
+        const pageWidth = page.offsetWidth;
+        const pageHeight = page.offsetHeight;
+        
+        // 获取容器尺寸
+        const containerWidth = dom.previewContainer.offsetWidth - 48; // 减去padding
+        const containerHeight = dom.previewContainer.offsetHeight - 48;
+        
+        // 计算自动适应的缩放比例
+        const autoScaleX = containerWidth / pageWidth;
+        const autoScaleY = containerHeight / pageHeight;
+        const autoScale = Math.min(autoScaleX, autoScaleY, 1); // 最大不超过1
+        
+        // 使用用户缩放和自动适应的最小值
+        const finalScale = Math.min(zoom, autoScale);
+        
+        page.style.transform = `scale(${finalScale})`;
+        page.style.transformOrigin = 'center top';
     });
+    
     dom.zoomText.textContent = Math.round(zoom * 100) + '%';
 }
 
