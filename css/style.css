@@ -1150,6 +1150,206 @@ select:hover {
     font-size: 12px;
 }
 
+/* ========== 移动端适配 ========== */
+@media screen and (max-width: 768px) {
+    body {
+        font-size: 14px;
+        overflow: auto;
+    }
+    
+    .app {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+    
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e8e8e8;
+        flex-shrink: 0;
+        overflow: visible;
+    }
+    
+    .sidebar-content {
+        padding: 12px;
+        overflow: visible;
+        min-height: auto;
+    }
+    
+    .upload-area {
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+    
+    .upload-icon {
+        font-size: 32px;
+    }
+    
+    .form-group {
+        margin-bottom: 10px;
+    }
+    
+    .grid-options {
+        gap: 6px;
+    }
+    
+    .grid-option {
+        padding: 8px 0;
+    }
+    
+    .action-buttons {
+        margin-top: 15px;
+        gap: 8px;
+    }
+    
+    .btn {
+        padding: 10px 16px;
+    }
+    
+    .image-list-section {
+        margin-top: 15px;
+        padding-top: 15px;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    
+    .image-grid {
+        gap: 8px;
+    }
+    
+    .preview-area {
+        width: 100%;
+        min-height: 400px;
+        flex: 1;
+    }
+    
+    .preview-toolbar {
+        padding: 10px 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .toolbar-left {
+        flex: 1;
+        min-width: 100%;
+        order: 1;
+    }
+    
+    .toolbar-right {
+        width: 100%;
+        justify-content: space-between;
+        order: 2;
+    }
+    
+    .toolbar-guide-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    .preview-container {
+        padding: 10px;
+        overflow: auto;
+    }
+    
+    .pages-wrapper {
+        align-items: flex-start;
+    }
+    
+    .page-preview {
+        transform: scale(0.6);
+        transform-origin: top center;
+        margin-bottom: 20px;
+    }
+    
+    .empty-state {
+        padding: 30px 20px;
+    }
+    
+    .empty-icon {
+        font-size: 36px;
+    }
+    
+    .empty-title {
+        font-size: 16px;
+    }
+    
+    .empty-desc {
+        font-size: 13px;
+    }
+    
+    .empty-steps {
+        gap: 10px;
+    }
+    
+    .empty-step {
+        font-size: 13px;
+    }
+    
+    .step-num {
+        width: 22px;
+        height: 22px;
+        font-size: 11px;
+    }
+    
+    .empty-tip {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+    
+    /* 图片查看器 */
+    .viewer-content {
+        width: 95vw;
+        max-height: 85vh;
+    }
+    
+    .viewer-header {
+        padding: 10px 15px;
+    }
+    
+    .viewer-title {
+        font-size: 13px;
+        max-width: 40%;
+    }
+    
+    .viewer-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+    }
+    
+    .viewer-image {
+        max-height: 60vh;
+    }
+    
+    /* 弹窗 */
+    .modal-content {
+        width: 95vw;
+        max-height: 90vh;
+        margin: 5vh auto;
+    }
+    
+    .modal-title {
+        padding: 12px 15px;
+    }
+    
+    .modal-body {
+        padding: 15px;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+    
+    .modal-footer {
+        padding: 10px 15px;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .modal-footer .btn {
+        width: 100%;
+    }
+}
+
 /* ========== 打印样式 ========== */
 @media print {
     html, body {
