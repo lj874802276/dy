@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>截图排版工具 - 财务报销</title>
-    <link rel="stylesheet" href="css/style.css?v=5">
+    <link rel="stylesheet" href="css/style.css?v=6">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
@@ -58,12 +58,6 @@
             <div class="sidebar-header">
                 <div class="title">截图排版工具</div>
                 <div class="subtitle">财务报销专用</div>
-                <div class="visit-stats">
-                    <span id="busuanzi_container_site_pv">
-                        <span class="stats-icon">👁</span>
-                        本站访问量: <span id="busuanzi_value_site_pv"></span> 次
-                    </span>
-                </div>
             </div>
 
             <div class="sidebar-content">
@@ -184,6 +178,7 @@
                     </div>
                 </div>
             </div>
+            
             <div class="preview-container" id="previewContainer">
                 <div class="pages-wrapper" id="pagesWrapper">
                     <div class="empty-state" id="emptyState">
@@ -206,6 +201,21 @@
                         </div>
                         <div class="empty-tip">💡 支持 Ctrl+V 快速粘贴截图</div>
                     </div>
+                </div>
+            </div>
+            
+            <!-- 右侧底部信息栏 -->
+            <div class="preview-footer">
+                <div class="footer-stats">
+                    <span id="busuanzi_container_site_pv">
+                        <span class="footer-icon">👁</span>
+                        访问量 <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                </div>
+                <div class="footer-divider"></div>
+                <div class="footer-copyright">
+                    <span>Developed by</span>
+                    <span class="developer-name">JieGer</span>
                 </div>
             </div>
         </div>
