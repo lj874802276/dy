@@ -25,7 +25,8 @@ const paperSizes = {
     A5Landscape: { width: 210, height: 148 },
     A5Portrait: { width: 148, height: 210 },
     A4Landscape: { width: 297, height: 210 },
-    A4Portrait: { width: 210, height: 297 }
+    A4Portrait: { width: 210, height: 297 },
+    Custom: { width: 210, height: 148 } // 默认自定义尺寸
 };
 
 // 纸张名称
@@ -33,7 +34,8 @@ const paperNames = {
     A5Landscape: 'A5 横版',
     A5Portrait: 'A5 竖版',
     A4Landscape: 'A4 横版',
-    A4Portrait: 'A4 竖版'
+    A4Portrait: 'A4 竖版',
+    Custom: '自定义'
 };
 
 // mm 转 px (96dpi)
@@ -63,6 +65,11 @@ const dom = {
     modalFooter: null,
     modalCancel: null,
     modalConfirm: null,
+    // 自定义纸张
+    paperSize: null,
+    customPaperGroup: null,
+    customWidth: null,
+    customHeight: null,
     // 图片查看器
     imageViewer: null,
     viewerImage: null,
@@ -90,6 +97,11 @@ function initDom() {
     dom.modalFooter = $('modalFooter');
     dom.modalCancel = $('modalCancel');
     dom.modalConfirm = $('modalConfirm');
+    // 自定义纸张
+    dom.paperSize = $('paperSize');
+    dom.customPaperGroup = $('customPaperGroup');
+    dom.customWidth = $('customWidth');
+    dom.customHeight = $('customHeight');
     // 图片查看器
     dom.imageViewer = $('imageViewer');
     dom.viewerImage = $('viewerImage');
@@ -379,12 +391,78 @@ function updateImageList() {
     $('btnClear').disabled = false;
 
     dom.imageList.innerHTML = state.images.map((img, index) => `
-        <div class="thumb-item" title="${img.name}" onclick="openImageViewer(${index})">
-            <img src="${img.src}" class="thumb-img" alt="${img.name}">
+        <div class="thumb-item" 
+             data-index="${index}" 
+             draggable="true"
+             title="${img.name} - 拖拽可排序">
+            <img src="${img.src}" class="thumb-img" alt="${img.name}" onclick="openImageViewer(${index})">
             <div class="thumb-index">${index + 1}</div>
             <button class="thumb-delete" onclick="event.stopPropagation(); deleteImage(${index})" title="删除">×</button>
         </div>
     `).join('');
+
+    // 绑定拖拽事件
+    bindDragEvents();
+}
+
+/**
+ * 绑定拖拽排序事件
+ */
+function bindDragEvents() {
+    const items = dom.imageList.querySelectorAll('.thumb-item');
+    let draggedItem = null;
+    let draggedIndex = null;
+
+    items.forEach(item => {
+        // 开始拖拽
+        item.addEventListener('dragstart', e => {
+            draggedItem = item;
+            draggedIndex = parseInt(item.dataset.index);
+            item.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        });
+
+        // 拖拽结束
+        item.addEventListener('dragend', e => {
+            item.classList.remove('dragging');
+            items.forEach(i => i.classList.remove('drag-over'));
+            draggedItem = null;
+            draggedIndex = null;
+        });
+
+        // 拖拽经过
+        item.addEventListener('dragover', e => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            if (item !== draggedItem) {
+                item.classList.add('drag-over');
+            }
+        });
+
+        // 拖拽离开
+        item.addEventListener('dragleave', e => {
+            item.classList.remove('drag-over');
+        });
+
+        // 放置
+        item.addEventListener('drop', e => {
+            e.preventDefault();
+            item.classList.remove('drag-over');
+            
+            const targetIndex = parseInt(item.dataset.index);
+            if (draggedIndex !== null && draggedIndex !== targetIndex) {
+                // 交换图片位置
+                const draggedImage = state.images[draggedIndex];
+                state.images.splice(draggedIndex, 1);
+                state.images.splice(targetIndex, 0, draggedImage);
+                
+                // 更新显示
+                updateImageList();
+                generatePreview();
+                showToast('图片顺序已调整', 'success');
+            }
+        });
+    });
 }
 
 /**
@@ -419,14 +497,52 @@ function clearAll() {
 // ============================================
 
 /**
+ * 更新自定义纸张尺寸
+ */
+function updateCustomPaperSize() {
+    const width = parseInt(dom.customWidth.value) || 210;
+    const height = parseInt(dom.customHeight.value) || 148;
+    
+    // 限制范围
+    const clampedWidth = Math.max(50, Math.min(500, width));
+    const clampedHeight = Math.max(50, Math.min(500, height));
+    
+    // 更新纸张尺寸
+    paperSizes.Custom = { width: clampedWidth, height: clampedHeight };
+    
+    // 更新预览
+    if (state.settings.paperSize === 'Custom') {
+        generatePreview();
+    }
+}
+
+/**
  * 绑定设置控件事件
  */
 function bindSettings() {
     // 纸张规格
-    $('paperSize').addEventListener('change', e => {
-        state.settings.paperSize = e.target.value;
+    dom.paperSize.addEventListener('change', e => {
+        const value = e.target.value;
+        state.settings.paperSize = value;
+        
+        // 显示/隐藏自定义纸张输入框
+        if (value === 'Custom') {
+            dom.customPaperGroup.style.display = 'block';
+            updateCustomPaperSize();
+        } else {
+            dom.customPaperGroup.style.display = 'none';
+        }
+        
         generatePreview();
     });
+
+    // 自定义纸张宽度
+    dom.customWidth.addEventListener('input', updateCustomPaperSize);
+    dom.customWidth.addEventListener('change', updateCustomPaperSize);
+
+    // 自定义纸张高度
+    dom.customHeight.addEventListener('input', updateCustomPaperSize);
+    dom.customHeight.addEventListener('change', updateCustomPaperSize);
 
     // 每页张数
     document.querySelectorAll('.grid-option').forEach(item => {

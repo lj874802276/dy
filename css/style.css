@@ -266,6 +266,42 @@ select:hover {
     accent-color: #1677ff;
 }
 
+/* ========== 自定义纸张输入 ========== */
+.custom-paper-group {
+    margin-top: 4px;
+}
+
+.custom-paper-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.custom-input {
+    width: 80px;
+    padding: 6px 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 12px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.custom-input:focus {
+    border-color: #1677ff;
+}
+
+.custom-input:hover {
+    border-color: #bfbfbf;
+}
+
+.custom-separator {
+    color: #999;
+    font-size: 14px;
+    font-weight: 500;
+}
+
 /* ========== 按钮 ========== */
 .action-buttons {
     margin-top: 8px;
@@ -503,6 +539,29 @@ select:hover {
 .thumb-delete:hover {
     background: #ff4d4f;
     transform: scale(1.1);
+}
+
+/* ========== 拖拽排序样式 ========== */
+.thumb-item.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+    border-color: #1677ff;
+    box-shadow: 0 4px 20px rgba(22, 119, 255, 0.3);
+}
+
+.thumb-item.drag-over {
+    border-color: #52c41a;
+    background: #f6ffed;
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(82, 196, 26, 0.3);
+}
+
+.thumb-item[draggable="true"] {
+    cursor: grab;
+}
+
+.thumb-item[draggable="true"]:active {
+    cursor: grabbing;
 }
 
 /* ========== 右侧预览区 ========== */
