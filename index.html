@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>截图排版工具 - 财务报销</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar">
+        <div class="progress-bar-fill" id="progressBarFill"></div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- 通用弹窗 -->
+    <div class="modal" id="modal">
+        <div class="modal-mask" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">
+                <span id="modalTitleText">标题</span>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">内容</div>
+            <div class="modal-footer" id="modalFooter">
+                <button class="btn btn-outline" id="modalCancel" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" id="modalConfirm">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图片查看器 -->
+    <div class="image-viewer" id="imageViewer">
+        <div class="viewer-mask" onclick="closeImageViewer()"></div>
+        <div class="viewer-content">
+            <div class="viewer-header">
+                <span class="viewer-title" id="viewerTitle">图片预览</span>
+                <div class="viewer-actions">
+                    <button class="viewer-btn" onclick="prevImage()" title="上一张">‹</button>
+                    <span class="viewer-counter" id="viewerCounter">1 / 1</span>
+                    <button class="viewer-btn" onclick="nextImage()" title="下一张">›</button>
+                    <button class="viewer-btn viewer-close" onclick="closeImageViewer()" title="关闭">×</button>
+                </div>
+            </div>
+            <div class="viewer-body">
+                <img class="viewer-image" id="viewerImage" src="" alt="预览">
+            </div>
+            <div class="viewer-footer">
+                <span class="viewer-info" id="viewerInfo"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="app">
+        <!-- 左侧面板 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="title">截图排版工具</div>
+                <div class="subtitle">财务报销专用</div>
+            </div>
+
+            <div class="sidebar-content">
+                <!-- 上传区域 -->
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="fileInput" accept="image/*" multiple>
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-text">点击或拖拽上传截图</div>
+                    <div class="upload-hint">支持 Ctrl+V 粘贴</div>
+                </div>
+
+                <!-- 纸张规格 -->
+                <div class="form-group">
+                    <label class="form-label">纸张规格</label>
+                    <select id="paperSize">
+                        <option value="A5Landscape">A5 横版 (210×148mm)</option>
+                        <option value="A5Portrait">A5 竖版 (148×210mm)</option>
+                        <option value="A4Landscape">A4 横版 (297×210mm)</option>
+                        <option value="A4Portrait">A4 竖版 (210×297mm)</option>
+                    </select>
+                </div>
+
+                <!-- 每页张数 -->
+                <div class="form-group">
+                    <label class="form-label">每页张数</label>
+                    <div class="grid-options" id="perPageOptions">
+                        <div class="grid-option" data-count="1">1张</div>
+                        <div class="grid-option" data-count="2">2张</div>
+                        <div class="grid-option" data-count="3">3张</div>
+                        <div class="grid-option active" data-count="4">4张</div>
+                        <div class="grid-option" data-count="6">6张</div>
+                        <div class="grid-option" data-count="8">8张</div>
+                        <div class="grid-option" data-count="9">9张</div>
+                    </div>
+                </div>
+
+                <!-- 排版方向 -->
+                <div class="form-group">
+                    <label class="form-label">排列方向</label>
+                    <div class="seg-control" id="directionControl">
+                        <div class="seg-item" data-dir="vertical">纵向排列</div>
+                        <div class="seg-item active" data-dir="horizontal">横向排列</div>
+                    </div>
+                </div>
+
+                <!-- 间距设置 -->
+                <div class="form-group">
+                    <label class="form-label">
+                        页边距
+                        <span class="form-value"><span id="marginValue">5</span>mm</span>
+                    </label>
+                    <input type="range" class="form-slider" id="margin" min="2" max="20" value="5" step="1">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        图片间距
+                        <span class="form-value"><span id="gapValue">2</span>mm</span>
+                    </label>
+                    <input type="range" class="form-slider" id="gap" min="0" max="10" value="2" step="1">
+                </div>
+
+                <!-- 显示选项 -->
+                <div class="form-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="showLabel">
+                        <span>显示序号</span>
+                    </label>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="btnExportPdf" disabled>导出 PDF</button>
+                    <button class="btn btn-outline" id="btnPrint" disabled>打印</button>
+                    <button class="btn btn-ghost" id="btnClear" disabled>清空全部</button>
+                </div>
+
+                <!-- 图片列表 -->
+                <div class="image-list-section">
+                    <div class="image-list-header">
+                        <span class="image-list-title">已上传</span>
+                        <span class="image-count" id="imageCount">0 张</span>
+                    </div>
+                    <div class="image-grid" id="imageList">
+                        <div class="empty-list">暂无图片</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧预览区 -->
+        <div class="preview-area">
+            <div class="preview-toolbar">
+                <div class="toolbar-left">
+                    <span class="stats-text" id="statsText">请先上传截图</span>
+                </div>
+                <div class="toolbar-right">
+                    <button class="toolbar-guide-btn" onclick="showGuide()">
+                        <span class="guide-icon">📖</span>
+                        <span>使用指南</span>
+                    </button>
+                    <div class="zoom-control">
+                        <button class="zoom-btn" id="zoomOut">−</button>
+                        <span class="zoom-text" id="zoomText">100%</span>
+                        <button class="zoom-btn" id="zoomIn">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="preview-container" id="previewContainer">
+                <div class="pages-wrapper" id="pagesWrapper">
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-icon">📄</div>
+                        <div class="empty-title">开始排版您的截图</div>
+                        <div class="empty-desc">上传截图后，预览将显示在这里</div>
+                        <div class="empty-steps">
+                            <div class="empty-step">
+                                <span class="step-num">1</span>
+                                <span class="step-text">点击左侧上传区域或拖拽图片</span>
+                            </div>
+                            <div class="empty-step">
+                                <span class="step-num">2</span>
+                                <span class="step-text">调整纸张规格和排版参数</span>
+                            </div>
+                            <div class="empty-step">
+                                <span class="step-num">3</span>
+                                <span class="step-text">导出 PDF 或直接打印</span>
+                            </div>
+                        </div>
+                        <div class="empty-tip">💡 支持 Ctrl+V 快速粘贴截图</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

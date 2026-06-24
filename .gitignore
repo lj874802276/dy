@@ -1,0 +1,12 @@
+# 忽略系统文件
+Thumbs.db
+.DS_Store
+
+# 忽略编辑器配置
+.vscode/
+.idea/
+
+# 忽略临时文件
+*.tmp
+*.temp
+*.log
