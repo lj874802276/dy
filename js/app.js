@@ -603,7 +603,8 @@ function getGridLayout(perPage, direction) {
         4: direction === 'vertical' ? { rows: 4, cols: 1 } : { rows: 2, cols: 2 },
         6: direction === 'vertical' ? { rows: 3, cols: 2 } : { rows: 2, cols: 3 },
         8: direction === 'vertical' ? { rows: 4, cols: 2 } : { rows: 2, cols: 4 },
-        9: { rows: 3, cols: 3 }
+        9: { rows: 3, cols: 3 },
+        10: direction === 'vertical' ? { rows: 5, cols: 2 } : { rows: 2, cols: 5 }
     };
     return layouts[perPage] || { rows: 1, cols: 1 };
 }
