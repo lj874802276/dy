@@ -54,6 +54,24 @@ body {
     margin-top: 1px;
 }
 
+.sidebar-header .visit-stats {
+    font-size: 10px;
+    color: #bbb;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.sidebar-header .stats-icon {
+    font-size: 10px;
+}
+
+.sidebar-header #busuanzi_value_site_pv {
+    color: #1677ff;
+    font-weight: 500;
+}
+
 .sidebar-content {
     padding: 10px 12px;
     flex: 1;
