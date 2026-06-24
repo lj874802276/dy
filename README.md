@@ -6,6 +6,18 @@
 
 ---
 
+## 界面预览
+
+### 电脑端
+
+![电脑端界面](assets/desktop-preview.webp)
+
+### 手机端
+
+![手机端界面](assets/mobile-preview.webp)
+
+---
+
 ## 功能特性
 
 ### 图片上传
@@ -76,6 +88,10 @@ screenshot-layout/
 │   └── style.css       # 样式表
 ├── js/
 │   └── app.js          # 主脚本
+├── assets/
+│   ├── favicon.jpg     # Logo图标
+│   ├── desktop-preview.webp  # 电脑端截图
+│   └── mobile-preview.webp    # 手机端截图
 └── README.md           # 本文档
 ```
 
